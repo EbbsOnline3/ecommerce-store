@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Node / Vite
+node_modules/
+dist/
+
+# Local databases and database sidecars
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.sqlite-shm
+*.sqlite-wal
+
+# Keep the ecommerce demo database
+!backend/store.db
+
+# Editor and operating system files
+.DS_Store
+.vscode/
+Thumbs.db
