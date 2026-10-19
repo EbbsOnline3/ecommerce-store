@@ -2,10 +2,8 @@ import { Link } from "react-router-dom";
 import EmptyProductsArray from "../components/EmptyProductsArray";
 import { Check, Minus, Plus } from "lucide-react";
 import Button from "../components/Button";
-import { useState } from "react";
 
 export default function Cart({cart, setErrorNotice, removeFromCart, updateQuantity}) {
-  const [quantityValue, setQuantityValue] = useState(1)
   const subtotal = cart.reduce((total, c) => (total + (c.price*c.quantity)), 0);
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -42,27 +40,21 @@ export default function Cart({cart, setErrorNotice, removeFromCart, updateQuanti
                       <span>
                         <Button 
                           text={<Plus />} 
-                          onClick={()=>{
-                            updateQuantity(c.id, quantityValue)
-                          }} 
+                          onClick={()=>{updateQuantity(c.id, c.quantity + 1)}} 
                         />
                         <input 
                           type="number" 
                           min={1} name="add" 
                           id="add-quantity-cart-input"
-                          onChange={(e) => setQuantityValue(e.target.value)}
-                          value={quantityValue} 
+                          onChange={(e) => updateQuantity(c.id, Number(e.target.value))}
+                          value={c.quantity} 
                         />
                         <Button 
                           text={<Minus />} 
-                          
+                          onClick={()=>{updateQuantity(c.id, c.quantity - 1)}}
                         />
+                        
                       </span>
-                      <Button 
-                        text={<Check size={25} />} 
-                        className="add-quantity-cart"
-                      >
-                      </Button>
                     </div> 
                   </div>
                 </div>

@@ -46,8 +46,8 @@ export default function App() {
     );
   };
 
-  const updateCart = (id, newQuantity)=> {
-    if(!Number.isInteger(newQuantity) || newQuantity <= 1){
+  const updateQuantity = (id, newQuantity)=> {
+    if(!Number.isInteger(newQuantity) || newQuantity <= 1 || newQuantity ===''){
       return
     }
     setCart(currentCart => {
@@ -147,7 +147,7 @@ export default function App() {
               cart={cart} 
               setErrorNotice={setErrorNotice} 
               removeFromCart ={removeFromCart}
-              updateCart={updateCart}
+              updateQuantity={updateQuantity}
           />} />
       </Routes>
     </Router>
