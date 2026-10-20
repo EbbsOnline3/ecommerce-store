@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { X } from "lucide-react";
 import LoadingIndicator from "../components/LoadingIndicator";
@@ -8,8 +8,6 @@ export default function Shop({
   setLoading, 
   addToCart, 
   products, 
-  setProducts, 
-  setErrorNotice,
   loading,
   errorNotice,
   setRetryCount
