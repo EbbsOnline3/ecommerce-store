@@ -1,31 +1,27 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ArrowRight, Check, X} from "lucide-react";
-// import { products } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import ReLoadProducts from "../components/ReLoadProducts";
 import LoadingIndicator from "../components/LoadingIndicator";
-// import { Link } from "react-router-dom";
 
 export default function Home({ 
-  onAddToCart, 
-  productQuantity, 
-  setErrorNotice, 
-  setProductQuantity,
-  errorNotice 
+  onAddToCart,
+  errorNotice ,
+  products,
+  loading,
+  setLoading,
+  setRetryCount
 }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("")
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [retryCount, setRetryCount] = useState(0);
 
   const categories = [
     "All",
-    ...new Set(products.map((product) => product.category)),
+    ...new Set(products && products.map((product) => product.category)),
   ];
 
   const search = searchTerm.toLowerCase().trim()
-  const filteredProducts =products.filter((product) => {
+  const filteredProducts =products && products.filter((product) => {
     
     const matchesCategory = activeCategory === "All" || product.category === activeCategory;
     const matchesSearch =
@@ -38,27 +34,7 @@ export default function Home({
   })
 
 
-  useEffect(() => {
-    setErrorNotice('')
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("http://127.0.0.1:5000/api/products");
-        if (!res.ok) {
-          throw new Error("Failed to load products");
-        }
-
-        const data = await res.json();
-        setProducts(data);
-      } catch (e) {
-        console.error(e);
-        setErrorNotice(`Error: ${e.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [setErrorNotice, retryCount]);
+  
 
   
   return (
@@ -148,8 +124,6 @@ export default function Home({
                 key={product.id}
                 product={product}
                 onAddToCart={onAddToCart}
-                productQuantity={productQuantity}
-                setProductQuantity={setProductQuantity}
               />
           )): <p>{products.length === 0 ? <p>No products available right now.</p>: filteredProducts.length === 0 ? <p>No product matched your search</p>: null}</p> : <p className='loading-text'> <LoadingIndicator/> Loading...</p>} 
           {!loading ? errorNotice ? filteredProducts.length ===0 ?<ReLoadProducts setLoading={setLoading} setRetryCount={setRetryCount} />: null:null : null }

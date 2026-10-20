@@ -1,18 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, X, XCircleIcon } from "lucide-react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
-// import Shop from "./pages/Shop";
+import Shop from "./pages/Shop";
 
 export default function App() {
   const [cart, setCart] = useState([]);
   const [notice, setNotice] = useState("");
   const [errorNotice, setErrorNotice] = useState("");
-  // const [searchTerm, setSearchTerm] = useState("")
-  // const [activeCategory, setActiveCategory] = useState("All");
   const [products, setProducts] = useState(null)
   const [loading, setLoading] = useState(true)
   const [retryCount, setRetryCount] = useState(0);
@@ -57,6 +55,38 @@ export default function App() {
     })
   }
 
+  useEffect(() => {
+    
+    const controller = new AbortController();
+
+    const fetchProducts = async () => {
+      setProducts(null);
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/api/products`, {
+          signal: controller.signal,
+        });
+        if (res.ok) {
+          setProducts(await res.json());
+        } else if (res.status === 404) {
+          setErrorNotice("Product not found");
+        } else if (res.status === 500) {
+          setErrorNotice("Server error");
+        } else {
+          throw new Error("Product can't be found");
+        }
+      } catch (e) {
+        if (e.name === "AbortError") return;
+        setErrorNotice("Failed to load product information");
+        console.error("Error:", e.message);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+
+    fetchProducts();
+    return () => controller.abort();
+  }, [retryCount]);
+
   return (
     <Router>
       <Navbar
@@ -95,7 +125,6 @@ export default function App() {
           element={
             <Home 
               onAddToCart={addToCart} 
-              notice={notice} 
               setNotice={setNotice} 
               setErrorNotice={setErrorNotice}
               errorNotice={errorNotice}
@@ -127,20 +156,19 @@ export default function App() {
               errorNotice={errorNotice}
           />} 
         />
-        {/* <Route 
+        { <Route 
           path="/products" 
           element={
             <Shop 
               setNotice={setNotice} 
               addToCart={addToCart}
-              setSearchTerm={setSearchTerm}
-              searchTerm={searchTerm}
-              activeCategory={activeCategory}
-              setActiveCategory={setActiveCategory}
               products={products}
               setProducts={setProducts}
+              loading={loading}
+              errorNotice={errorNotice}
+              setRetryCount={setRetryCount}
           />} 
-        /> */}
+        /> }
         <Route path="/shop/cart" 
           element={
             <Cart 

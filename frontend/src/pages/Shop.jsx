@@ -1,16 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { X } from "lucide-react";
+import LoadingIndicator from "../components/LoadingIndicator";
+import ReLoadProducts from "../components/ReLoadProducts";
 
-export default function Shop({setLoading, addToCart,searchTerm, setSearchTerm, activeCategory, setActiveCategory, products, setProducts}) {
-
+export default function Shop({
+  setLoading, 
+  addToCart, 
+  products, 
+  setProducts, 
+  setErrorNotice,
+  loading,
+  errorNotice,
+  setRetryCount
+}) {
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("")
   const categories = [
     "All",
-    ...new Set(products.map((product) => product.category)),
+    ...new Set(products && products.map((product) => product.category)),
   ];
 
   const search = searchTerm.toLowerCase().trim()
-  const filteredProducts =products.filter((product) => {
+  const filteredProducts = products && products.filter((product) => {
     
     const matchesCategory = activeCategory === "All" || product.category === activeCategory;
     const matchesSearch =
@@ -22,28 +34,7 @@ export default function Shop({setLoading, addToCart,searchTerm, setSearchTerm, a
       return matchesCategory && matchesSearch;
   })
 
-  useEffect(()=>{
-    const fetchedProducts = async () => { 
-      try{
-        const res = await fetch('http://127.0.0.1:5000/api/products')
-        if (res.ok){
-          const data = await res.json()
-          setProducts(data)
-          setLoading(true)
-        } 
-        else{
-          throw("Error fetching ")
-        }
-      }
-      catch(e){
-        console.log(e)
-      }
-      finally{
-        setLoading(false)
-      }
-    }
-    return fetchedProducts
-  },[setLoading, setProducts])
+  
   return (
     <div>
       <div className="category-filters" aria-label="Filter products">
@@ -73,14 +64,15 @@ export default function Shop({setLoading, addToCart,searchTerm, setSearchTerm, a
         ))}
       </div>
       <div className="product-grid">
-          {filteredProducts.length > 0 ? filteredProducts.map((product) => (
+          {!loading ? filteredProducts.length > 0 ? filteredProducts.map((product) => (
             
               <ProductCard
                 key={product.id}
                 product={product}
-                addToCart={addToCart}
+                onAddToCart={addToCart}
               />
-          )): <p>No products found.</p>}
+          )): <p>{products.length === 0 ? <p>No products available right now.</p>: filteredProducts.length === 0 ? <p>No product matched your search</p>: null}</p> : <p className='loading-text'> <LoadingIndicator/> Loading...</p>} 
+          {!loading ? errorNotice ? filteredProducts.length ===0 ?<ReLoadProducts setLoading={setLoading} setRetryCount={setRetryCount} />: null:null : null }
         </div>
     </div>
   )

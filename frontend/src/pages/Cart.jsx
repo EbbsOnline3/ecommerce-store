@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import EmptyProductsArray from "../components/EmptyProductsArray";
-import { Check, Minus, Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import Button from "../components/Button";
 
 export default function Cart({cart, setErrorNotice, removeFromCart, updateQuantity}) {
@@ -64,7 +64,7 @@ export default function Cart({cart, setErrorNotice, removeFromCart, updateQuanti
       }): <div className="cart-items-div1"> <EmptyProductsArray  text={'Cart is empty'} showTryAgain={false} /> <Link to="/shop/">Add Items</Link></div> }
       </div>
       <div className="checkout-details">
-        <form action="" onSubmit={(e)=>{handleSubmit(e)}}>
+        {cart.length >=1 &&<form action="" onSubmit={(e)=>{handleSubmit(e)}}>
           <h2>CheckOut Details</h2>
           <div className="form-details">
             <div >
@@ -94,7 +94,7 @@ export default function Cart({cart, setErrorNotice, removeFromCart, updateQuanti
             </label>
             <button type="submit">Checkout</button>
           </div>
-        </form>
+        </form>}
         {cart.length >= 1 && <p className="subtotal">Subtotal:GH₵ {subtotal.toFixed(2)}</p>}
       </div>
     </div>

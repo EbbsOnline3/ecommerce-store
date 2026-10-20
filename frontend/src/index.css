@@ -1005,13 +1005,13 @@ div .loading-symbol{
 .additional-quantity div{
   display: flex;
   gap: var(--gap-4);
-  justify-content: center;
+  justify-content: end;
   align-items: center;
 }
 
 .cart-details .add-quantity-cart{
   display: flex;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
   background-color: var(--accent);
   outline: none;
@@ -1027,6 +1027,7 @@ div .loading-symbol{
   color: var(--text-color);
   text-align: center;
   font-size: var(--text-font);
+  width: 20%;
 }
 
 .checkout-details{
@@ -1171,6 +1172,7 @@ div .loading-symbol{
 
   .cart-page{
     flex-direction: column;
+    display: block;
   }
   .cart-items-div, .checkout-details{
     width: 100%;
