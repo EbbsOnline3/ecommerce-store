@@ -5,7 +5,7 @@ import sqlite3
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(app,  resources={r"/api/*": {"origins": "http://localhost:5173"}})
 
 DATABASE = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),

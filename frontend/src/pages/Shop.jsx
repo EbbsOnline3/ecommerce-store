@@ -34,7 +34,7 @@ export default function Shop({
 
   
   return (
-    <div>
+    <div className="shop">
       <div className="category-filters" aria-label="Filter products">
         <div className="search-filter-div">
           <input type="search" value={searchTerm} onChange={(e)=>{

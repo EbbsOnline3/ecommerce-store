@@ -105,6 +105,10 @@ a {
   text-decoration: none;
 }
 
+a.active{
+  color: var(--dark-accent);
+}
+
 .confirmation-div{
   position: absolute;
   height: 100dvh;
@@ -407,6 +411,7 @@ input[type="search"]::-webkit-search-cancel-button {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--gap-2);
+  padding: 10px;
 }
 
 .product-card {
@@ -1099,6 +1104,31 @@ div .loading-symbol{
   display: flex;
   gap: var(--gap-5);
 }
+
+/* Shop Styles */
+.shop{
+  color: var(--text-color);
+}
+
+
+
+
+
+/* About styles */
+.about-section{
+  color: var(--text-color);
+}
+
+
+
+/* Contact styles */
+.contact-section{
+  color: var(--text-color);
+}
+
+
+
+
 
 
 

@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Shop from "./pages/Shop";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 export default function App() {
   const [cart, setCart] = useState([]);
@@ -128,16 +130,11 @@ export default function App() {
               setNotice={setNotice} 
               setErrorNotice={setErrorNotice}
               errorNotice={errorNotice}
-              // setSearchTerm={setSearchTerm}
-              // searchTerm={searchTerm}
-              // activeCategory={activeCategory}
-              // setActiveCategory={setActiveCategory}
               products={products}
               setProducts={setProducts}
               setLoading={setLoading}
               setRetryCount={setRetryCount}
               loading={loading}
-              retryCount={retryCount}
             />} 
         />
         <Route 
@@ -156,7 +153,7 @@ export default function App() {
               errorNotice={errorNotice}
           />} 
         />
-        { <Route 
+        <Route 
           path="/products" 
           element={
             <Shop 
@@ -168,7 +165,7 @@ export default function App() {
               errorNotice={errorNotice}
               setRetryCount={setRetryCount}
           />} 
-        /> }
+        /> 
         <Route path="/shop/cart" 
           element={
             <Cart 
@@ -177,6 +174,8 @@ export default function App() {
               removeFromCart ={removeFromCart}
               updateQuantity={updateQuantity}
           />} />
+          <Route path="/about" element={<About />}/>
+          <Route path="/contact" element={<Contact />}/>
       </Routes>
     </Router>
   );
