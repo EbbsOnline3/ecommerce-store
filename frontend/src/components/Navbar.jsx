@@ -1,5 +1,5 @@
 import { ShoppingBag, Search, Menu } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Navbar({ cartCount }) {
   const navigate = useNavigate()
@@ -10,10 +10,10 @@ export default function Navbar({ cartCount }) {
       </a>
 
       <nav className="nav-links">
-        <Link to={"/"}>Home</Link>
-        <Link to={"/products"}>Shop</Link>
-        <Link to={"/about"}>About</Link>
-        <Link to={"/contact"}>Contact</Link>
+        <NavLink to={"/"}>Home</NavLink>
+        <NavLink to={"/products"}>Shop</NavLink>
+        <NavLink to={"/about"}>About</NavLink>
+        <NavLink to={"/contact"}>Contact</NavLink>
       </nav>
 
       <div className="nav-actions">

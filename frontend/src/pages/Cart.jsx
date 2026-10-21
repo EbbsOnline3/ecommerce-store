@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import EmptyProductsArray from "../components/EmptyProductsArray";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, Trash } from "lucide-react";
 import Button from "../components/Button";
 
 export default function Cart({cart, setErrorNotice, removeFromCart, updateQuantity}) {
@@ -30,7 +30,7 @@ export default function Cart({cart, setErrorNotice, removeFromCart, updateQuanti
                       title="delete item"
                       aria-label="delete item"
                     >
-                      Remove
+                      <Trash size={17} />
                     </button>
                   </div>
                   <span>GH₵ {c.price}</span>
@@ -61,7 +61,7 @@ export default function Cart({cart, setErrorNotice, removeFromCart, updateQuanti
               
             </div>
           )
-      }): <div className="cart-items-div1"> <EmptyProductsArray  text={'Cart is empty'} showTryAgain={false} /> <Link to="/shop/">Add Items</Link></div> }
+      }): <div className="cart-items-div1"> <EmptyProductsArray  text={'Cart is empty'} showTryAgain={false} /> <Link to="/products/">Add Items</Link></div> }
       </div>
       <div className="checkout-details">
         {cart.length >=1 &&<form action="" onSubmit={(e)=>{handleSubmit(e)}}>

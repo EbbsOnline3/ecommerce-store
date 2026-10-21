@@ -3,6 +3,7 @@ import { ArrowRight, Check, X} from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import ReLoadProducts from "../components/ReLoadProducts";
 import LoadingIndicator from "../components/LoadingIndicator";
+import { Link } from "react-router-dom";
 
 export default function Home({ 
   onAddToCart,
@@ -90,8 +91,8 @@ export default function Home({
           <p>Good things, chosen with care.</p>
         </div>
 
-        <div className="category-filters" aria-label="Filter products">
-          <div className="search-filter-div">
+        <div className="category-filters category-filters-home" aria-label="Filter products">
+          <div className="search-filter-div search-filter-div-home">
             <input type="search" value={searchTerm} onChange={(e)=>{
               setSearchTerm(e.target.value)
             }} name="search" id="search" placeholder="Search products by name, price, tag, or category..." />
@@ -129,6 +130,7 @@ export default function Home({
           {!loading ? errorNotice ? filteredProducts.length ===0 ?<ReLoadProducts setLoading={setLoading} setRetryCount={setRetryCount} />: null:null : null }
           
         </div>
+        <Link to={"/products"} className="view-all-products">View All Products <ArrowRight size={17} /> </Link>
       </section>
 
       <section className="newsletter" id="contact">

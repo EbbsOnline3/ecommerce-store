@@ -13,7 +13,7 @@ export default function App() {
   const [cart, setCart] = useState([]);
   const [notice, setNotice] = useState("");
   const [errorNotice, setErrorNotice] = useState("");
-  const [products, setProducts] = useState(null)
+  const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [retryCount, setRetryCount] = useState(0);
 
