@@ -1,3 +1,5 @@
+![alt text](image.png)
+
 # E-Commerce Store
 
 A full-stack e-commerce web application built with React and Flask. The project includes a product catalogue, individual product pages, a shopping cart, and an order confirmation interface.
@@ -17,7 +19,6 @@ A full-stack e-commerce web application built with React and Flask. The project 
 **Frontend**
 - React
 - React Router
-- Axios
 - Vite
 - CSS
 
