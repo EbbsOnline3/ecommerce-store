@@ -17,7 +17,6 @@ A full-stack e-commerce web application built with React and Flask. The project 
 **Frontend**
 - React
 - React Router
-- Axios
 - Vite
 - CSS
 
