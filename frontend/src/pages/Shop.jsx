@@ -1,8 +1,8 @@
 import { useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { Plus, X } from "lucide-react";
-import LoadingIndicator from "../components/LoadingIndicator";
-import ReLoadProducts from "../components/ReLoadProducts";
+import LoadingState from "../components/LoadingState";
+import EmptyProductsArray from "../components/EmptyProductsArray";
 
 export default function Shop({
   setLoading, 
@@ -91,7 +91,7 @@ export default function Shop({
           </select>
         </div>
       </div>
-      <div className="product-grid shop">
+      <div className={!errorNotice  ? "product-grid shop": "product-flex"}>
         {!loading ? sortedProducts.length > 0 ? sortedProducts.map((product) => (
           
             <ProductCard
@@ -99,8 +99,7 @@ export default function Shop({
               product={product}
               onAddToCart={addToCart}
             />
-        )): <p>{products.length === 0 ? <p>No products available right now.</p>: filteredProducts.length === 0 ? <p>No product matched your search</p>: null}</p> : <p className='loading-text'> <LoadingIndicator/> Loading...</p>} 
-        {!loading ? errorNotice ? filteredProducts.length ===0 ?<ReLoadProducts setLoading={setLoading} setRetryCount={setRetryCount} />: null:null : null }
+        )): errorNotice ? <EmptyProductsArray text={"Failed to load products"} setRetryCount={setRetryCount} setLoading={setLoading} /> : products && products.length===0 ? <EmptyProductsArray text={"No products available"} setRetryCount={setRetryCount} setLoading={setLoading} />: sortedProducts && sortedProducts.length === 0 ? <EmptyProductsArray styles={{display: "flex", width: "100%"}} text={"No matching products"} showTryAgain={false}  />: <EmptyProductsArray /> :<LoadingState text={"Loading..."} /> }
       </div>
       <button className="add-product" aria-label="add">
         <Plus size={25} xlinkTitle="add-product" />
