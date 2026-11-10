@@ -1,15 +1,50 @@
-import { Link } from "react-router-dom";
+import Paystack from '@paystack/inline-js'
+import { Link, useNavigate } from "react-router-dom";
 import EmptyProductsArray from "../components/EmptyProductsArray";
 import { Minus, Plus, Trash } from "lucide-react";
 import Button from "../components/Button";
+import { useRef } from 'react';
 
-export default function Cart({cart, setErrorNotice, removeFromCart, updateQuantity}) {
+export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFromCart, updateQuantity}) {
+  const navigate = useNavigate()
   const subtotal = cart.reduce((total, c) => (total + (c.price*c.quantity)), 0);
+  const mailRef= useRef()
+  const lastNameRef= useRef()
+  const firstNameRef= useRef()
+  
+  function payWithPaystack(){
+    if (mailRef.current.value === '' || firstNameRef.current.value === '' || lastNameRef.current.value === ''){
+      setErrorNotice("Name or Email not filled")
+      return
+    }
+    console.log(subtotal)
+    const popup = new Paystack()
+    popup.checkout({
+      key: "pk_test_14d8c14df0cdaf2140a0530b80200ac58e1b1605",
+      email: mailRef.current.value,
+      amount: Math.round(subtotal * 100), //Lowest amount 
+      currency: "GHS",
+      onSuccess: (transaction) => {
+        setNotice("Transaction is successful!!!") 
+        console.log(transaction)
+        navigate("/shop") //set url to shop
+        setCart([]) //se cart back to an empty state
+      },
+      onCancel: () => {
+        console.log("Payment modal closed")
+      },
+      onError: (error) =>{
+        console.error("Error:", error.message)
+      }
+    })
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     if (cart.length <1){
       return setErrorNotice("Cart is Empty")
     }
+    payWithPaystack()
   }
   return (
     <div className="cart-page" id="cart-page-div">
@@ -61,7 +96,7 @@ export default function Cart({cart, setErrorNotice, removeFromCart, updateQuanti
               
             </div>
           )
-      }): <div className="cart-items-div1"> <EmptyProductsArray  text={'Cart is empty'} showTryAgain={false} /> <Link to="/products/">Add Items</Link></div> }
+      }): <div className="cart-items-div1"> <EmptyProductsArray  text={'Cart is empty'} showTryAgain={false} /> <Link to="/shop/">Add Items</Link></div> }
       </div>
       <div className="checkout-details">
         {cart.length >=1 &&<form action="" onSubmit={(e)=>{handleSubmit(e)}}>
@@ -69,16 +104,16 @@ export default function Cart({cart, setErrorNotice, removeFromCart, updateQuanti
           <div className="form-details">
             <div >
               <label htmlFor="first-name">First Name
-                <input type="text" name="first-name" id="first-name" required/>
+                <input type="text" ref={firstNameRef} name="first-name" id="first-name" required/>
               </label>
               <label htmlFor="last-name">
                 Last Name
-                <input type="text" name="last-name" id="last-name" required/>
+                <input type="text" ref={lastNameRef} name="last-name" id="last-name" required/>
               </label>
             </div>
             <label htmlFor="email">
               Email
-              <input type="email" name="email" id="email" required/>
+              <input autoComplete="true" ref={mailRef} type="email" name="email" id="email" required/>
             </label>
             <label htmlFor="address">
               Address

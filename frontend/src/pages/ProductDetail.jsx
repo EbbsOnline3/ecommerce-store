@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import LoadingState from "../components/LoadingState";
 import EmptyProductsArray from "../components/EmptyProductsArray";
@@ -7,8 +7,7 @@ import QuantityModifier from "../components/QuantityModifier";
 import BackToPrevPage from "../components/BackToPrevPage";
 
 export default function ProductDetail({
-  addToCart, 
-  setNotice,
+  addToCart,
   setRetryCount,
   setLoading,
   retryCount,
@@ -20,7 +19,7 @@ export default function ProductDetail({
   const [product, setProduct] = useState()
   // const product = products.find((p) => p.id === parseInt(id));
   const [productQuantity, setProductQuantity] = useState(1)
-
+  const [quantityNotice, setQuantityNotice] = useState("");
 
   useEffect(() => {
     setErrorNotice("")
@@ -60,7 +59,7 @@ export default function ProductDetail({
     return () => {
       controller.abort();
     };
-  }, [setProduct, id, retryCount, setErrorNotice, setLoading])
+  }, [ id, retryCount, setErrorNotice, setLoading])
 
   return (
     <div className="product-detail-page">
@@ -91,7 +90,9 @@ export default function ProductDetail({
               </div>
             </div>
             <div className="product-detail-actions">
-              <QuantityModifier setNotice={setNotice} setProductQuantity={setProductQuantity} productQuantity={productQuantity} />
+              <QuantityModifier setQuantityNotice={setQuantityNotice} setProductQuantity={setProductQuantity} productQuantity={productQuantity} />
+              {quantityNotice && <p className="quantity-notice-text" style={{color: 'var(--error)', fontSize: 'var(--small-font)', position: 'absolute', backgroundColor: 'var(--paper)', top: '100px', padding:"10px", right:"10px", display:"flex"}}>{quantityNotice} 
+                <span> <X size={17} onClick={()=> setQuantityNotice('')}/></span></p>}
               <div className="product-details-actions-btn">
                 <button 
                   className="add-to-cart-button" 

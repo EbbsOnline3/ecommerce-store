@@ -11,7 +11,7 @@ export default function Navbar({ cartCount }) {
 
       <nav className="nav-links">
         <NavLink to={"/"}>Home</NavLink>
-        <NavLink to={"/products"}>Shop</NavLink>
+        <NavLink to={"/shop"}>Shop</NavLink>
         <NavLink to={"/about"}>About</NavLink>
         <NavLink to={"/contact"}>Contact</NavLink>
       </nav>

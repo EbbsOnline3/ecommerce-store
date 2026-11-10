@@ -5,6 +5,8 @@ import sqlite3
 
 app = Flask(__name__)
 
+# Only allow the local Vite dev server to call /api/* from the browser.
+# NOTE: I will update origins for production.
 CORS(app,  resources={r"/api/*": {"origins": "http://localhost:5173"}})
 
 DATABASE = os.path.join(

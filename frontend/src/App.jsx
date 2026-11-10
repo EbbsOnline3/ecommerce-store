@@ -10,7 +10,10 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 
 export default function App() {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("Cart")
+    return savedCart ? JSON.parse(savedCart) : []
+  });
   const [notice, setNotice] = useState("");
   const [errorNotice, setErrorNotice] = useState("");
   const [products, setProducts] = useState([])
@@ -47,7 +50,7 @@ export default function App() {
   };
 
   const updateQuantity = (id, newQuantity)=> {
-    if(!Number.isInteger(newQuantity) || newQuantity <= 1 || newQuantity ===''){
+    if(!Number.isInteger(newQuantity) || newQuantity < 1 || newQuantity ===''){
       return
     }
     setCart(currentCart => {
@@ -89,6 +92,10 @@ export default function App() {
     return () => controller.abort();
   }, [retryCount]);
 
+  useEffect(() => {
+    localStorage.setItem("Cart", JSON.stringify(cart));
+  }, [cart]);
+
   return (
     <Router>
       <Navbar
@@ -127,18 +134,15 @@ export default function App() {
           element={
             <Home 
               onAddToCart={addToCart} 
-              setNotice={setNotice} 
-              setErrorNotice={setErrorNotice}
               errorNotice={errorNotice}
               products={products}
-              setProducts={setProducts}
               setLoading={setLoading}
               setRetryCount={setRetryCount}
               loading={loading}
             />} 
         />
         <Route 
-          path="/products/:id" 
+          path="/shop/:id" 
           element={
             <ProductDetail 
               setNotice={setNotice} 
@@ -154,7 +158,7 @@ export default function App() {
           />} 
         />
         <Route 
-          path="/products" 
+          path="/shop" 
           element={
             <Shop 
               setNotice={setNotice} 
@@ -170,6 +174,8 @@ export default function App() {
           element={
             <Cart 
               cart={cart} 
+              setCart={setCart}
+              setNotice={setNotice}
               setErrorNotice={setErrorNotice} 
               removeFromCart ={removeFromCart}
               updateQuantity={updateQuantity}

@@ -43,20 +43,46 @@ export default function Shop({
   //   sortOption === "Default" && a - b || sortOption === "A - Z" && a.name.localeCompare(b.name) || sortOption === "L - H"&& a.price - b.price || sortOption === "H - L"&& b.price - a.price
   // )
   const sortedProducts = [...(filteredProducts ?? [])].sort((a, b) => {
-    switch (sortOption) {
-    case "price-asc":
-      return a.price - b.price;
+      switch (sortOption) {
+      case "price-asc":
+        return a.price - b.price;
 
-    case "price-desc":
-      return b.price - a.price;
+      case "price-desc":
+        return b.price - a.price;
 
-    case "name-asc":
-      return a.name.localeCompare(b.name);
+      case "name-asc":
+        return a.name.localeCompare(b.name);
 
-    default:
-      return 0;
+      default:
+        return 0;
+    }
+  });
+
+  function renderProductArea() {
+    if (loading) {
+      return <LoadingState text={"Loading..."} />;
+    }
+    
+    if (errorNotice) {
+      return <EmptyProductsArray text={"Failed to load products"} setRetryCount={setRetryCount} setLoading={setLoading} />;
+    }
+    
+    if (products && products.length === 0) {
+      return <EmptyProductsArray text={"No products available"} setRetryCount={setRetryCount} setLoading={setLoading} />;
+    }
+    
+    if (sortedProducts.length === 0) {
+      return <EmptyProductsArray styles={{display: "flex", width: "100%"}} text={"No matching products"} showTryAgain={false} />;
+    }
+    
+    return sortedProducts.map((product) => (
+      <ProductCard
+        key={product.id}
+        product={product}
+        onAddToCart={addToCart}
+      />
+    ));
   }
-});
   
   return (
     <div className="shop">
@@ -92,17 +118,10 @@ export default function Shop({
         </div>
       </div>
       <div className={!errorNotice  ? "product-grid shop": "product-flex"}>
-        {!loading ? sortedProducts.length > 0 ? sortedProducts.map((product) => (
-          
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={addToCart}
-            />
-        )): errorNotice ? <EmptyProductsArray text={"Failed to load products"} setRetryCount={setRetryCount} setLoading={setLoading} /> : products && products.length===0 ? <EmptyProductsArray text={"No products available"} setRetryCount={setRetryCount} setLoading={setLoading} />: sortedProducts && sortedProducts.length === 0 ? <EmptyProductsArray styles={{display: "flex", width: "100%"}} text={"No matching products"} showTryAgain={false}  />: <EmptyProductsArray /> :<LoadingState text={"Loading..."} /> }
+        {renderProductArea() }
       </div>
-      <button className="add-product" aria-label="add">
-        <Plus size={25} xlinkTitle="add-product" />
+      <button className="add-product" title="add-product" aria-label="add">
+        <Plus size={25} />
       </button>
     </div>
   )

@@ -1,11 +1,11 @@
 import { Minus, Plus } from 'lucide-react';
 
-export default function QuantityModifier({productQuantity, setProductQuantity, setNotice}) {
+export default function QuantityModifier({productQuantity, setProductQuantity, setQuantityNotice}) {
   const quantityPlus = ()=>{
     setProductQuantity(
      productQuantity <3000 ? parseInt(productQuantity) + 1 : productQuantity
     )
-    productQuantity >= 3000 ? setNotice("Quantity can't be increased"): setNotice("")
+    productQuantity >= 3000 ? setQuantityNotice("Quantity can't be increased"): setQuantityNotice("")
     productQuantity < 1 ? setProductQuantity(1) : productQuantity
   }
   const quantityMinus = ()=>{
@@ -13,7 +13,7 @@ export default function QuantityModifier({productQuantity, setProductQuantity, s
       productQuantity >1 ? parseInt(productQuantity) - 1 : productQuantity
     )
     productQuantity > 3000 ? setProductQuantity(3000) : productQuantity
-    productQuantity <2 ? setNotice("Quantity can't be lowered"): setNotice("")
+    productQuantity <2 ? setQuantityNotice("Quantity can't be lowered"): setQuantityNotice("")
   }
   return (
     <div className="product-detail-quantity-div">

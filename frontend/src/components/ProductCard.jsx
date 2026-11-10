@@ -12,7 +12,7 @@ export default function ProductCard({ product, onAddToCart}) {
           >
           <Heart size={18} color="var(--text-color)" />
         </button>
-        <Link key={product.id} to={`/products/${product.id}`}>
+        <Link key={product.id} to={`/shop/${product.id}`}>
           <img
             className="product-image"
             src={product.image}

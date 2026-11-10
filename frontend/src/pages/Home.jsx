@@ -15,14 +15,15 @@ export default function Home({
 }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("")
+  const safeProducts = products ?? [];
 
   const categories = [
     "All",
-    ...new Set(products && products.map((product) => product.category)),
+    ...new Set(safeProducts && safeProducts.map((product) => product.category)),
   ];
 
   const search = searchTerm.toLowerCase().trim()
-  const filteredProducts =products && products.filter((product) => {
+  const filteredProducts =safeProducts && safeProducts.filter((product) => {
     
     const matchesCategory = activeCategory === "All" || product.category === activeCategory;
     const matchesSearch =
@@ -34,7 +35,31 @@ export default function Home({
       return matchesCategory && matchesSearch;
   })
 
-
+  function renderHomeProducts() {
+    if (loading) {
+      return <p className='loading-text'><LoadingIndicator /> Loading...</p>;
+    }
+    
+    if (errorNotice) {
+      return <ReLoadProducts setLoading={setLoading} setRetryCount={setRetryCount} />;
+    }
+    
+    if (safeProducts.length === 0) {
+      return <p>No products available right now.</p>;
+    }
+    
+    if (filteredProducts.length === 0) {
+      return <p>No product matched your search</p>;
+    }
+    
+    return filteredProducts.map((product) => (
+      <ProductCard
+        key={product.id}
+        product={product}
+        onAddToCart={onAddToCart}
+      />
+    ));
+  }
   
 
   
@@ -119,18 +144,10 @@ export default function Home({
         </div>
 
         <div className="product-grid">
-          {!loading ? filteredProducts.length > 0 ? filteredProducts.map((product) => (
-            
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={onAddToCart}
-              />
-          )): <p>{products.length === 0 ? <p>No products available right now.</p>: filteredProducts.length === 0 ? <p>No product matched your search</p>: null}</p> : <p className='loading-text'> <LoadingIndicator/> Loading...</p>} 
-          {!loading ? errorNotice ? filteredProducts.length ===0 ?<ReLoadProducts setLoading={setLoading} setRetryCount={setRetryCount} />: null:null : null }
+          {renderHomeProducts()}
           
         </div>
-        <Link to={"/products"} className="view-all-products">View All Products <ArrowRight size={17} /> </Link>
+        <Link to={"/shop"} className="view-all-products">View All Products <ArrowRight size={17} /> </Link>
       </section>
 
       <section className="newsletter" id="contact">
