@@ -17,18 +17,41 @@ export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFr
       setErrorNotice("Name or Email not filled")
       return
     }
-    console.log(subtotal)
     const popup = new Paystack()
     popup.checkout({
       key: "pk_test_14d8c14df0cdaf2140a0530b80200ac58e1b1605",
       email: mailRef.current.value,
       amount: Math.round(subtotal * 100), //Lowest amount 
       currency: "GHS",
-      onSuccess: (transaction) => {
-        setNotice("Transaction is successful!!!") 
-        console.log(transaction)
-        navigate("/shop") //set url to shop
-        setCart([]) //se cart back to an empty state
+      onSuccess: async (transaction) => {
+          try {
+            const payLoad = {
+              first_name : firstNameRef.current.value,
+              last_name: lastNameRef.current.value,
+              order_total: subtotal,
+              order_items: cart,
+              transaction: transaction,
+              email: mailRef.current.value
+            }
+            const res = await fetch("http://127.0.0.1:5000/api/orders",{
+              method: 'POST', 
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payLoad)
+  
+            })
+            if(res.status === 201){
+              setNotice("Transaction is successful!!!")
+              navigate("/shop") //set url to shop
+              setCart([]) //se cart back to an empty state            
+            }else {
+              setErrorNotice("Payment succeeded but order could not be saved. Please contact support.")
+            }
+          } catch (error) {
+            setErrorNotice("Payment succeeded but order failed. Please contact support.")
+            console.log(error.message)
+          }
       },
       onCancel: () => {
         console.log("Payment modal closed")

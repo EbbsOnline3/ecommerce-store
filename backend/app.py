@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, json
+from flask import Flask, jsonify, json, request
 from flask_cors import CORS
 import sqlite3
 
@@ -19,6 +19,9 @@ def init_db():
   query = connection.cursor()
   query.execute(
     "CREATE TABLE IF NOT EXISTS products(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, category text NOT NULL, badge TEXT, image TEXT not null, description TEXT NOT NULL, price REAL NOT NULL, quantity INTEGER NOT NULL DEFAULT 0)"
+    )
+  query.execute(
+    "CREATE TABLE IF NOT EXISTS orders(order_id INTEGER PRIMARY KEY AUTOINCREMENT,first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT NOT NULL, order_total REAL NOT NULL, order_items TEXT NOT NULL)"
     )
   connection.commit()
   connection.close()
@@ -173,6 +176,37 @@ def get_product(product_id):
     finally:
       if conn is not None:
         conn.close()
+
+@app.route("/api/orders", methods= ["POST"])
+def orders():
+  try:
+    data = request.get_json()
+    first_name = data.get("first_name")
+    last_name = data.get("last_name")
+    order_total = data.get("order_total")
+    order_items = json.dumps(data.get("order_items"))
+    email = data.get("email")
+    if not all([first_name, last_name, email, order_total, order_items]):
+      return jsonify({
+        "error": "Missing input fields"
+      }), 400
+    
+    conn = sqlite3.connect(DATABASE)
+    cur = conn.cursor()
+    
+    cur.execute("INSERT INTO orders (first_name, last_name, email, order_total, order_items) Values (?,?,?,?,?)", (first_name, last_name, email, order_total, order_items))
+    conn.commit()
+    conn.close()
+    return jsonify({
+      "success": "Order created successfully"
+    }),201
+  except sqlite3.Error as e:
+    return jsonify({
+      "error": str(e)
+    }),500
+  finally:
+    if conn is not None:
+      conn.close()
 
 
 if(__name__ == '__main__'):
