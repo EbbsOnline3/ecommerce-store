@@ -1010,11 +1010,13 @@ div .loading-symbol{
   gap: var(--gap-4);
   justify-content: center;
   align-items: center;
+  height: calc(100% - 90px);
+  color: var(--text-color);
 }
 
 .cart-items-div1 a{
   position: absolute;
-  top: 50%;
+  top: 60%;
   padding: 10px 15px;
   border: 1px solid var(--dark-accent);
 }

@@ -70,7 +70,8 @@ export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFr
     payWithPaystack()
   }
   return (
-    <div className="cart-page" id="cart-page-div">
+    <>
+    {cart.length >= 1 ?<div className="cart-page" id="cart-page-div">
       <div className="cart-items-div">
         <h1>Your Cart <span>({cart.length} {cart.length >1 ?<span>items</span>:<span>item</span>})</span></h1>
         {cart.length >= 1 ? cart.map((c) => {
@@ -155,6 +156,6 @@ export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFr
         </form>}
         {cart.length >= 1 && <p className="subtotal">Subtotal:GH₵ {subtotal.toFixed(2)}</p>}
       </div>
-    </div>
-  )
+    </div>: <div className="cart-items-div1"> <EmptyProductsArray  text={'Cart is empty'} showTryAgain={false} /> <Link to="/shop/">Add Items</Link></div>}
+  </>)
 }
