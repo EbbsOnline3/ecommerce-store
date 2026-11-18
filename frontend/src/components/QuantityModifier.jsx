@@ -28,6 +28,7 @@ export default function QuantityModifier({productQuantity, setProductQuantity, s
         type="number" 
         name="product-quantity" 
         id="product-detail-quantity-input" 
+        aria-label="product quantity"
         min={1} max={3000} 
         value={parseInt(productQuantity)}
         onChange={(e) => setProductQuantity(parseInt(e.target.value > 3000 ? 3000 : e.target.value < 1 ? 1 : e.target.value))}

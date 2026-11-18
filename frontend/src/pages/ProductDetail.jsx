@@ -5,6 +5,7 @@ import LoadingState from "../components/LoadingState";
 import EmptyProductsArray from "../components/EmptyProductsArray";
 import QuantityModifier from "../components/QuantityModifier";
 import BackToPrevPage from "../components/BackToPrevPage";
+import { resolveImageUrl } from "../components/resolveImageUrl";
 
 export default function ProductDetail({
   addToCart,
@@ -69,7 +70,7 @@ export default function ProductDetail({
       {!loading ? errorNotice ? <EmptyProductsArray setLoading={setLoading} setRetryCount={setRetryCount} text= {errorNotice} /> : product ? (
         <div className="product-detail">
           <div className="product-detail-image">
-            <img src={product.image} alt={product.name} loading="lazy" />
+            <img src={resolveImageUrl(product.image)} alt={product.name} loading="lazy" />
             <div>
               
             </div>

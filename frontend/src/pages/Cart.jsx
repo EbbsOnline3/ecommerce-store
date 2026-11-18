@@ -19,7 +19,7 @@ export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFr
     }
     const popup = new Paystack()
     popup.checkout({
-      key: "pk_test_14d8c14df0cdaf2140a0530b80200ac58e1b1605",
+      key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
       email: mailRef.current.value,
       amount: Math.round(subtotal * 100), //Lowest amount 
       currency: "GHS",
@@ -128,20 +128,20 @@ export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFr
           <div className="form-details">
             <div >
               <label htmlFor="first-name">First Name
-                <input type="text" ref={firstNameRef} name="first-name" id="first-name" required/>
+                <input type="text" ref={firstNameRef} name="first-name" id="first-name" placeholder="Ebenezer" required/>
               </label>
               <label htmlFor="last-name">
                 Last Name
-                <input type="text" ref={lastNameRef} name="last-name" id="last-name" required/>
+                <input type="text" ref={lastNameRef} name="last-name" id="last-name" placeholder="Yeboah" required/>
               </label>
             </div>
             <label htmlFor="email">
               Email
-              <input autoComplete="true" ref={mailRef} type="email" name="email" id="email" required/>
+              <input autoComplete="true" ref={mailRef} placeholder="example@gmail.com" type="email" name="email" id="email" required/>
             </label>
             <label htmlFor="address">
               Address
-              <input type="text" name="address" id="address" required/>
+              <input type="text" name="address" id="address" placeholder="google or gps address" required/>
             </label>
             <label htmlFor="contact">
               Phone Number

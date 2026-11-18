@@ -1,5 +1,6 @@
 import { Heart, ShoppingBag, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { resolveImageUrl } from "./resolveImageUrl";
 
 export default function ProductCard({ product, onAddToCart}) {
   
@@ -15,7 +16,7 @@ export default function ProductCard({ product, onAddToCart}) {
         <Link key={product.id} to={`/shop/${product.id}`}>
           <img
             className="product-image"
-            src={product.image}
+            src={resolveImageUrl(product.image)}
             alt={product.name}
             loading="lazy"
           />

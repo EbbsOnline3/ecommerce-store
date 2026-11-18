@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import { Plus, X } from "lucide-react";
 import LoadingState from "../components/LoadingState";
 import EmptyProductsArray from "../components/EmptyProductsArray";
+import { Link } from "react-router-dom";
 
 export default function Shop({
   setLoading, 
@@ -15,6 +16,8 @@ export default function Shop({
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("")
   const [sortOption, setSortOption] = useState("default");
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
   const categories = [
     "All",
     ...new Set(products && products.map((product) => product.category)),
@@ -58,6 +61,13 @@ export default function Shop({
     }
   });
 
+  const paginatedProducts = sortedProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  useEffect(() => { setCurrentPage(1) }, [searchTerm, activeCategory, sortOption])
+
   function renderProductArea() {
     if (loading) {
       return <LoadingState text={"Loading..."} />;
@@ -90,7 +100,7 @@ export default function Shop({
         <div className="search-filter-div">
           <input type="search" value={searchTerm} onChange={(e)=>{
             setSearchTerm(e.target.value)
-          }} name="search" id="search" placeholder="Search products by name, price, tag, or category..." />
+          }} name="search" id="search" placeholder="Search products by name, price, tag, or category..." aria-label="search products"/>
           {searchTerm.trim() !=='' 
             && <button className="clear-search" onClick={()=>{setSearchTerm("")
               }} aria-label="Clear search input"> 
@@ -110,7 +120,7 @@ export default function Shop({
               {category}
             </button>
           ))}
-          <select name="sort" id="sort" onChange={(e)=>setSortOption(e.target.value)}>
+          <select name="sort" id="sort" aria-label="Sort products" onChange={(e)=>setSortOption(e.target.value)}>
             {sortOptions.map(op => 
               <option key={op.value} value={op.value}> {op.label} </option>
             )}
@@ -120,9 +130,17 @@ export default function Shop({
       <div className={!errorNotice  ? "product-grid shop": "product-flex"}>
         {renderProductArea() }
       </div>
-      <button className="add-product" title="add-product" aria-label="add">
+      <Link to="/shop/add" className="add-product" title="add-product" aria-label="add">
         <Plus size={25} />
-      </button>
+      </Link>
+      <div className="pages-div">
+        <div className="current-page">
+          <button>1</button>
+          <button>2</button>
+          <span>...</span>
+          <button>4</button>
+        </div>
+      </div>
     </div>
   )
 }

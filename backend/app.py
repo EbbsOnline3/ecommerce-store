@@ -1,13 +1,24 @@
-import os
-from flask import Flask, jsonify, json, request
+import os, uuid
+from flask import Flask, jsonify, json, request, send_from_directory
 from flask_cors import CORS
 import sqlite3
+from dotenv import load_dotenv
+
+# Load environment variable from the .env file
+load_dotenv()
 
 app = Flask(__name__)
 
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024   # 5 MB
+ALLOWED_EXT = {"png", "jpg", "jpeg", "gif", "webp"}
+
 # Only allow the local Vite dev server to call /api/* from the browser.
 # NOTE: I will update origins for production.
-CORS(app,  resources={r"/api/*": {"origins": "http://localhost:5173"}})
+origins = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+CORS(app,  resources={r"/api/*": {"origins": origins}})
 
 DATABASE = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -23,6 +34,11 @@ def init_db():
   query.execute(
     "CREATE TABLE IF NOT EXISTS orders(order_id INTEGER PRIMARY KEY AUTOINCREMENT,first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT NOT NULL, order_total REAL NOT NULL, order_items TEXT NOT NULL)"
     )
+  # add after CREATE TABLE
+  try:
+      query.execute("ALTER TABLE products ADD COLUMN colours TEXT NOT NULL DEFAULT ''")
+  except sqlite3.OperationalError:
+      pass  # column already exists
   connection.commit()
   connection.close()
 
@@ -130,8 +146,60 @@ def api_health():
   }
 
 
-@app.route('/api/products')
+@app.route('/api/products', methods=["GET", "POST"])
 def products():
+  if request.method == "POST":
+    conn = None
+    filename = None
+    image_url = None
+    try:
+      
+      data = request.form
+      if not data:
+        return jsonify({"error": "Empty form body"}), 400
+      name = data.get("name")
+      category = data.get("category")
+      tag = data.get("tag")
+      description = data.get("description")
+      colours = data.get("colours")
+      price = data.get("price")
+      quantity = data.get("quantity")
+      
+      missing = [k for k in ("name","category","tag","description","colours","price","quantity") if not request.form.get(k)]
+      if missing:
+          return jsonify({"error": f"Missing fields: {missing}"}), 400
+      
+      file = request.files.get("image")
+      if not file or file.filename == "":
+          return jsonify({"error": "Image is required"}), 400
+      ext = file.filename.rsplit(".", 1)[-1].lower()
+      if ext not in ALLOWED_EXT:
+          return jsonify({"error": "Unsupported image type"}), 400
+
+      filename = f"{uuid.uuid4().hex}.{ext}"
+      file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+      image_url = f"/uploads/{filename}"   
+      
+      # Connect to database and save the new product
+      conn = sqlite3.connect(DATABASE, timeout=10.0)
+      cur = conn.cursor()
+      cur.execute("INSERT INTO products (name, category, badge, image, description, colours, price, quantity) values(?,?,?,?,?,?,?,?)", (name, category, tag, image_url, description, colours, price, quantity))
+      conn.commit()
+      
+      # Return a success message for successful addition
+      return jsonify({
+        "success": "Product added successfully!"
+      }), 201
+    except sqlite3.Error as e:
+      if image_url:   # saved but not committed
+        try: os.remove(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+        except FileNotFoundError: pass
+      return jsonify({
+        "error": str(e)
+      }), 500
+    finally:
+      if conn is not None:
+        conn.close()
   connection = None
   try:
     connection = sqlite3.connect(DATABASE)
@@ -201,12 +269,18 @@ def orders():
       "success": "Order created successfully"
     }),201
   except sqlite3.Error as e:
+    print(e)
     return jsonify({
       "error": str(e)
     }),500
   finally:
     if conn is not None:
       conn.close()
+
+
+@app.route("/uploads/<path:filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 
 if(__name__ == '__main__'):

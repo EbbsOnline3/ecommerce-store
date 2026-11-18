@@ -8,6 +8,7 @@ import Cart from "./pages/Cart";
 import Shop from "./pages/Shop";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import AddNewProduct from "./pages/AddNewProduct";
 
 export default function App() {
   const [cart, setCart] = useState(() => {
@@ -180,6 +181,10 @@ export default function App() {
               removeFromCart ={removeFromCart}
               updateQuantity={updateQuantity}
           />} />
+          <Route path="/shop/add" element={<AddNewProduct 
+            setNotice = {setNotice}
+            setErrorNotice={setErrorNotice}
+          />}/>
           <Route path="/about" element={<About />}/>
           <Route path="/contact" element={<Contact />}/>
       </Routes>

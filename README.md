@@ -13,6 +13,10 @@ A full-stack e-commerce web application built with React and Flask. The project 
 - Flask REST API for retrieving product data
 - SQLite database for product storage
 - Responsive React frontend
+- Paystack payment gateway integration
+- Persistent cart state (localStorage)
+- Search, category filtering, and sorting on the Shop page
+- Full checkout flow with database persistence
 
 ## Tech Stack
 
@@ -45,6 +49,7 @@ ecommerce-store/
 ```
 
 ## Getting Started
+App uses the Paystack test public key, so checkout is in test mode.
 
 ### Prerequisites
 
@@ -96,6 +101,7 @@ Open the local URL printed by Vite in your browser.
 | GET | `/api/health` | Check backend health |
 | GET | `/api/products` | Retrieve all products |
 | GET | `/api/products/<product_id>` | Retrieve a product by ID |
+| POST | `/api/orders` | Create a new order |
 
 ## Notes
 
@@ -106,9 +112,9 @@ Open the local URL printed by Vite in your browser.
 ## Future Improvements
 
 - Add user authentication
-- Implement checkout and payment processing
 - Connect a production database
-- Deploy the frontend and backend
+- Deploy the frontend and backend to a cloud provider (e.g., Vercel + Render)
+- Add backend webhooks to verify Paystack payments server-side
 
 ## Author
 
