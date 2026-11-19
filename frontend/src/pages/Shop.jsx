@@ -18,6 +18,8 @@ export default function Shop({
   const [sortOption, setSortOption] = useState("default");
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
+  
+  
   const categories = [
     "All",
     ...new Set(products && products.map((product) => product.category)),
@@ -61,12 +63,16 @@ export default function Shop({
     }
   });
 
-  const paginatedProducts = sortedProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+  const totalPages = Math.max(
+    1,
+    Math.ceil((sortedProducts?.length ?? 0) / itemsPerPage)
   );
+  const safePage = Math.min(currentPage, totalPages);
 
-  useEffect(() => { setCurrentPage(1) }, [searchTerm, activeCategory, sortOption])
+  const paginatedProducts = sortedProducts.slice(
+    (safePage - 1) * itemsPerPage,
+    safePage * itemsPerPage
+  );
 
   function renderProductArea() {
     if (loading) {
@@ -81,11 +87,11 @@ export default function Shop({
       return <EmptyProductsArray text={"No products available"} setRetryCount={setRetryCount} setLoading={setLoading} />;
     }
     
-    if (sortedProducts.length === 0) {
+    if (paginatedProducts.length === 0) {
       return <EmptyProductsArray styles={{display: "flex", width: "100%"}} text={"No matching products"} showTryAgain={false} />;
     }
     
-    return sortedProducts.map((product) => (
+    return paginatedProducts.map((product) => (
       <ProductCard
         key={product.id}
         product={product}
@@ -93,6 +99,8 @@ export default function Shop({
       />
     ));
   }
+
+  useEffect(() => { window.scrollTo({ top: 0 }) }, [safePage])
   
   return (
     <div className="shop">
@@ -100,9 +108,11 @@ export default function Shop({
         <div className="search-filter-div">
           <input type="search" value={searchTerm} onChange={(e)=>{
             setSearchTerm(e.target.value)
+            setCurrentPage(1)
           }} name="search" id="search" placeholder="Search products by name, price, tag, or category..." aria-label="search products"/>
           {searchTerm.trim() !=='' 
             && <button className="clear-search" onClick={()=>{setSearchTerm("")
+              setCurrentPage(1)
               }} aria-label="Clear search input"> 
                 <X size={27}/>
               </button>
@@ -115,12 +125,18 @@ export default function Shop({
                   ? "category-button active"
                   : "category-button"
               }
-              onClick={() => setActiveCategory(category)}
+              onClick={() => {
+                setActiveCategory(category);
+                setCurrentPage(1);
+              }}
             >
               {category}
             </button>
           ))}
-          <select name="sort" id="sort" aria-label="Sort products" onChange={(e)=>setSortOption(e.target.value)}>
+          <select name="sort" id="sort" aria-label="Sort products" onChange={(e)=>{
+            setSortOption(e.target.value);
+            setCurrentPage(1);
+          }}>
             {sortOptions.map(op => 
               <option key={op.value} value={op.value}> {op.label} </option>
             )}
@@ -133,14 +149,22 @@ export default function Shop({
       <Link to="/shop/add" className="add-product" title="add-product" aria-label="add">
         <Plus size={25} />
       </Link>
-      <div className="pages-div">
+      {totalPages > 1 && <div className="pages-div">
         <div className="current-page">
-          <button>1</button>
-          <button>2</button>
-          <span>...</span>
-          <button>4</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+          <button
+            key={n}
+            className={n === safePage ? "active" : ""}
+            onClick={() => setCurrentPage(n)}
+            aria-label={`Page ${n}`}
+            aria-current={n === safePage ? "page" : undefined}
+          >
+            {n}
+          </button>
+          ))}
+          
         </div>
-      </div>
+      </div>}
     </div>
   )
 }

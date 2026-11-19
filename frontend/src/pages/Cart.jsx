@@ -4,6 +4,8 @@ import EmptyProductsArray from "../components/EmptyProductsArray";
 import { Minus, Plus, Trash } from "lucide-react";
 import Button from "../components/Button";
 import { useRef } from 'react';
+import BackToPrevPage from '../components/BackToPrevPage';
+import { resolveImageUrl } from '../components/resolveImageUrl';
 
 export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFromCart, updateQuantity}) {
   const navigate = useNavigate()
@@ -71,6 +73,9 @@ export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFr
   }
   return (
     <>
+    <div className="back-to">
+      <BackToPrevPage />
+    </div>
     {cart.length >= 1 ?<div className="cart-page" id="cart-page-div">
       <div className="cart-items-div">
         <h1>Your Cart <span>({cart.length} {cart.length >1 ?<span>items</span>:<span>item</span>})</span></h1>
@@ -78,7 +83,7 @@ export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFr
           return (
             <div key={c.id} className="cart-items">
                 <div className="cart-image">
-                  <img src={c.image} alt={c.name} draggable={false} /> 
+                  <img src={resolveImageUrl(c.image)} alt={c.name} draggable={false} /> 
                 </div>
                 <div className="cart-details">
                   <div className="cart-top-content">
