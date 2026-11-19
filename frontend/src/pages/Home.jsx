@@ -35,6 +35,9 @@ export default function Home({
       return matchesCategory && matchesSearch;
   })
 
+
+  const paginatedProducts = filteredProducts.slice(0, 8);
+
   function renderHomeProducts() {
     if (loading) {
       return <p className='loading-text'><LoadingIndicator /> Loading...</p>;
@@ -48,11 +51,11 @@ export default function Home({
       return <p>No products available right now.</p>;
     }
     
-    if (filteredProducts.length === 0) {
+    if (paginatedProducts.length === 0) {
       return <p>No product matched your search</p>;
     }
     
-    return filteredProducts.map((product) => (
+    return paginatedProducts.map((product) => (
       <ProductCard
         key={product.id}
         product={product}
@@ -154,15 +157,20 @@ export default function Home({
         <span className="eyebrow">STAY IN THE LOOP</span>
         <h2>Good finds, occasionally.</h2>
         <p>New arrivals and thoughtful picks, without the noise.</p>
-        <a href="mailto:hello@example.com" className="newsletter-link">
+        <Link to="/contact" className="newsletter-link">
           Get in touch <ArrowRight size={17} />
-        </a>
+        </Link>
       </section>
 
       <footer className="footer" id="about">
         <a className="brand" href="#home">
           millennial<span>.</span>
         </a>
+        <div className="footer-links">
+          <Link to="/about">About</Link>
+          <Link to="/contact">Contact</Link>
+          <Link to="/privacy">Privacy</Link>
+        </div>
         <p>Considered essentials for everyday life.</p>
         <span>© 2026 Millennial Store</span>
       </footer>

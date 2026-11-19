@@ -9,6 +9,8 @@ import Shop from "./pages/Shop";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import AddNewProduct from "./pages/AddNewProduct";
+import Profile from "./pages/Profile";
+import Privacy from "./pages/Privacy";
 
 export default function App() {
   const [cart, setCart] = useState(() => {
@@ -68,7 +70,7 @@ export default function App() {
     const fetchProducts = async () => {
       setProducts(null);
       try {
-        const res = await fetch(`http://127.0.0.1:5000/api/products`, {
+        const res = await fetch(`/api/products`, {
           signal: controller.signal,
         });
         if (res.ok) {
@@ -185,8 +187,10 @@ export default function App() {
             setNotice = {setNotice}
             setErrorNotice={setErrorNotice}
           />}/>
-          <Route path="/about" element={<About />}/>
-          <Route path="/contact" element={<Contact />}/>
+          <Route path="/about" element={<About setErrorNotice={setErrorNotice} setNotice={setNotice} />}/>
+          <Route path="/contact" element={<Contact setErrorNotice={setErrorNotice} setNotice={setNotice} />}/>
+          <Route path="/profile" element={<Profile setErrorNotice={setErrorNotice} setNotice={setNotice} />}/>
+          <Route path="/privacy" element={<Privacy />}/>
       </Routes>
     </Router>
   );

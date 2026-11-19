@@ -41,6 +41,8 @@ export default function Navbar({ cartCount }) {
           </span>
         </button>
 
+        <Link to={"/profile"}><p className="profile">E</p> </Link>
+
         <button className="icon-button mobile-menu" aria-label={isOpen ? "Close Menu" : "Open menu"} onClick={handleClick}>
           {isOpen ? <X size={22} /> : <Menu size={22} />}
         </button>

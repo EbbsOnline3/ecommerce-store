@@ -35,7 +35,7 @@ export default function Cart({cart, setCart, setNotice, setErrorNotice, removeFr
               transaction: transaction,
               email: mailRef.current.value
             }
-            const res = await fetch("http://127.0.0.1:5000/api/orders",{
+            const res = await fetch("/api/orders",{
               method: 'POST', 
               headers: {
                 "Content-Type": "application/json",

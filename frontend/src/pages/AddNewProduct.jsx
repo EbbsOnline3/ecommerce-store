@@ -27,7 +27,7 @@ export default function AddNewProduct({setNotice, setErrorNotice}) {
       fd.append("price", price);
       fd.append("quantity", quantity);
       fd.append("image", fileInputRef.current.files[0]);   // the File object
-      const res = await fetch("http://127.0.0.1:5000/api/products", {
+      const res = await fetch("/api/products", {
         method: "POST",
         
         body: fd

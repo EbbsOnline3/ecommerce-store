@@ -34,9 +34,29 @@ def init_db():
   query.execute(
     "CREATE TABLE IF NOT EXISTS orders(order_id INTEGER PRIMARY KEY AUTOINCREMENT,first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT NOT NULL, order_total REAL NOT NULL, order_items TEXT NOT NULL)"
     )
+  # inside init_db(), after the orders table:
+  query.execute(
+    """CREATE TABLE IF NOT EXISTS contact_messages(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        subject TEXT NOT NULL,
+        message TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      )"""
+  )
+  
+  
   # add after CREATE TABLE
   try:
       query.execute("ALTER TABLE products ADD COLUMN colours TEXT NOT NULL DEFAULT ''")
+  except sqlite3.OperationalError:
+      pass  # column already exists
+    
+  # SQLite forbids DEFAULT CURRENT_TIMESTAMP on ALTER, so use an empty default + backfill.
+  try:
+      query.execute("ALTER TABLE products ADD COLUMN created_at TEXT NOT NULL DEFAULT ''")
+      query.execute("UPDATE products SET created_at = datetime('now') WHERE created_at = ''")
   except sqlite3.OperationalError:
       pass  # column already exists
   connection.commit()
@@ -281,6 +301,45 @@ def orders():
 @app.route("/uploads/<path:filename>")
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
+
+@app.route("/api/contact", methods=["POST"])
+def contact():
+  conn = None
+  try:
+      data = request.get_json(silent=True)
+      if not data:
+          return jsonify({"error": "Invalid JSON body"}), 400
+
+      name    = (data.get("name") or "").strip()
+      email   = (data.get("email") or "").strip()
+      subject = (data.get("subject") or "").strip()
+      message = (data.get("message") or "").strip()
+
+      missing = [k for k, v in
+                  (("name", name), ("email", email), ("subject", subject), ("message", message))
+                  if not v]
+      if missing:
+          return jsonify({"error": f"Missing fields: {missing}"}), 400
+      if "@" not in email or "." not in email.split("@")[-1]:
+          return jsonify({"error": "Invalid email"}), 400
+      if len(message) > 5000:
+          return jsonify({"error": "Message too long"}), 400
+
+      conn = sqlite3.connect(DATABASE, timeout=10.0)
+      cur = conn.cursor()
+      cur.execute(
+          "INSERT INTO contact_messages (name, email, subject, message) VALUES (?,?,?,?)",
+          (name, email, subject, message)
+      )
+      conn.commit()
+      return jsonify({"success": "Message received"}), 201
+  except sqlite3.Error as e:
+      return jsonify({"error": str(e)}), 500
+  finally:
+      if conn is not None:
+          conn.close()
+
 
 
 if(__name__ == '__main__'):
